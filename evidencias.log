@@ -1,113 +1,0 @@
-Script started on 2026-08-18 20:18:53-03:00 [TERM="xterm-256color" TTY="/dev/pts/4" COLUMNS="122" LINES="9"]
-[?2004h]0;davi@computadordavi: ~/projetos/dmcv[01;32mdavi@computadordavi[00m:[01;34m~/projetos/dmcv[00m$ date
-[?2004lTue Aug 18 20:19:13 -03 2026
-[?2004h]0;davi@computadordavi: ~/projetos/dmcv[01;32mdavi@computadordavi[00m:[01;34m~/projetos/dmcv[00m$ whoami
-[?2004ldavi
-[?2004h]0;davi@computadordavi: ~/projetos/dmcv[01;32mdavi@computadordavi[00m:[01;34m~/projetos/dmcv[00m$ pwd
-[?2004l/home/davi/projetos/dmcv
-[?2004h]0;davi@computadordavi: ~/projetos/dmcv[01;32mdavi@computadordavi[00m:[01;34m~/projetos/dmcv[00m$ git add .
-[?2004l[?2004h]0;davi@computadordavi: ~/projetos/dmcv[01;32mdavi@computadordavi[00m:[01;34m~/projetos/dmcv[00m$ git commit -m "create arquivos iniciais"
-[?2004lAuthor identity unknown
-
-*** Please tell me who you are.
-
-Run
-
-  git config --global user.email "you@example.com"
-  git config --global user.name "Your Name"
-
-to set your account's default identity.
-Omit --global to set the identity only in this repository.
-
-fatal: empty ident name (for <davi@computadordavi.localdomain>) not allowed
-[?2004h]0;davi@computadordavi: ~/projetos/dmcv[01;32mdavi@computadordavi[00m:[01;34m~/projetos/dmcv[00m$ [7mgit config --global user.name "Davi Maltez"[27m[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cgit config --global user.name "Davi Maltez"[C[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"d"a"v"i"m"a"l"t"e"z"
-[?2004l[?2004h]0;davi@computadordavi: ~/projetos/dmcv[01;32mdavi@computadordavi[00m:[01;34m~/projetos/dmcv[00m$ [7mgit config --global user.email "seu-email-do-github@example.com"[27m[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cgit config --global user.email "seu-email-do-github@example.com"[C[1P.com"[1P.com"[1P.com"[1P.com"[1P.com"[1P.com"[1P.com"[1P.com"[1P.com"[1P.com"[1P.com"[1P.com"[1P.com"[1P.com"[1P.com"[1P.com"[1P.com"[1P.com"[1P.com"[1P.com"[1P.com"[1P.com"[1P.com"[1P.com"[1P.com"[1P.com"[1P.com"m.com"a.com"l.com"t.com"e.com"z.com"d.com"a.com"v.com"i.com"d.com"4.com"3.com"8.com"@.com"g.com"m.com"a.com"i.com"l.com"
-[?2004l[?2004h]0;davi@computadordavi: ~/projetos/dmcv[01;32mdavi@computadordavi[00m:[01;34m~/projetos/dmcv[00m$ [7mgit commit -m "create arquivos iniciais"[27m[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cgit commit -m "create arquivos iniciais"
-[?2004l[main e3c7190] create arquivos iniciais
- 4 files changed, 0 insertions(+), 0 deletions(-)
- rename README.md => dmcv/README.md (100%)
- create mode 100644 dmcv/makefile
- create mode 100644 dmcv/processflow.c
- create mode 100644 evidencias.log
-[?2004h]0;davi@computadordavi: ~/projetos/dmcv[01;32mdavi@computadordavi[00m:[01;34m~/projetos/dmcv[00m$ make
-[?2004lmake: *** No targets specified and no makefile found.  Stop.
-[?2004h]0;davi@computadordavi: ~/projetos/dmcv[01;32mdavi@computadordavi[00m:[01;34m~/projetos/dmcv[00m$ cd dmcv
-[?2004l[?2004h]0;davi@computadordavi: ~/projetos/dmcv/dmcv[01;32mdavi@computadordavi[00m:[01;34m~/projetos/dmcv/dmcv[00m$ make
-[?2004lgcc -Wall -Wextra -std=c11 -c main.c
-gcc -Wall -Wextra -std=c11 -o processflow main.o
-[?2004h]0;davi@computadordavi: ~/projetos/dmcv/dmcv[01;32mdavi@computadordavi[00m:[01;34m~/projetos/dmcv/dmcv[00m$ ./main
-[?2004lbash: ./main: No such file or directory
-[?2004h]0;davi@computadordavi: ~/projetos/dmcv/dmcv[01;32mdavi@computadordavi[00m:[01;34m~/projetos/dmcv/dmcv[00m$ ./processflow
-[?2004lprocesflow>exit
-Programa encerrado[?2004h]0;davi@computadordavi: ~/projetos/dmcv/dmcv[01;32mdavi@computadordavi[00m:[01;34m~/projetos/dmcv/dmcv[00m$ make
-[?2004lgcc -Wall -Wextra -std=c11 -c main.c
-gcc -Wall -Wextra -std=c11 -o processflow main.o
-[?2004h]0;davi@computadordavi: ~/projetos/dmcv/dmcv[01;32mdavi@computadordavi[00m:[01;34m~/projetos/dmcv/dmcv[00m$ make./processflow
-[?2004lprocesflow>exit
-Programa encerrado
-[?2004h]0;davi@computadordavi: ~/projetos/dmcv/dmcv[01;32mdavi@computadordavi[00m:[01;34m~/projetos/dmcv/dmcv[00m$ exit
-[?2004lexit
-
-Script done on 2026-08-18 21:40:59-03:00 [COMMAND_EXIT_CODE="0"]
-Script started on 2026-08-18 21:52:15-03:00 [TERM="xterm-256color" TTY="/dev/pts/4" COLUMNS="122" LINES="9"]
-[?2004h]0;davi@computadordavi: ~/projetos/dmcv[01;32mdavi@computadordavi[00m:[01;34m~/projetos/dmcv[00m$ exit./processflow
-[?2004lbash: ./processflow: No such file or directory
-[?2004h]0;davi@computadordavi: ~/projetos/dmcv[01;32mdavi@computadordavi[00m:[01;34m~/projetos/dmcv[00m$ make
-[?2004lmake: *** No targets specified and no makefile found.  Stop.
-[?2004h]0;davi@computadordavi: ~/projetos/dmcv[01;32mdavi@computadordavi[00m:[01;34m~/projetos/dmcv[00m$ cd dmcv
-[?2004l[?2004h]0;davi@computadordavi: ~/projetos/dmcv/dmcv[01;32mdavi@computadordavi[00m:[01;34m~/projetos/dmcv/dmcv[00m$ cd dmcv[3Pmake./processflow[K[K[K[K[K[K[K[K[K[K[K[K[Kmake
-[?2004lgcc -Wall -Wextra -std=c11 -c main.c
-gcc -Wall -Wextra -std=c11 -o processflow main.o
-[?2004h]0;davi@computadordavi: ~/projetos/dmcv/dmcv[01;32mdavi@computadordavi[00m:[01;34m~/projetos/dmcv/dmcv[00m$ makecd dmcv[3Pmake./processflow
-[?2004lprocesflow>task / listar / /bin/ls / -l
-task
-/
-listar
-/
-/bin/ls
-/
--l
-[?2004h]0;davi@computadordavi: ~/projetos/dmcv/dmcv[01;32mdavi@computadordavi[00m:[01;34m~/projetos/dmcv/dmcv[00m$ m[Kmake
-[?2004lgcc -Wall -Wextra -std=c11 -c main.c
-gcc -Wall -Wextra -std=c11 -o processflow main.o
-[?2004h]0;davi@computadordavi: ~/projetos/dmcv/dmcv[01;32mdavi@computadordavi[00m:[01;34m~/projetos/dmcv/dmcv[00m$ make./processflow
-[?2004lprocesflow>task / listar / /bin/ls / -l
-task/listar//bin/ls/-l[?2004h]0;davi@computadordavi: ~/projetos/dmcv/dmcv[01;32mdavi@computadordavi[00m:[01;34m~/projetos/dmcv/dmcv[00m$ make
-[?2004lgcc -Wall -Wextra -std=c11 -c main.c
-gcc -Wall -Wextra -std=c11 -o processflow main.o
-[?2004h]0;davi@computadordavi: ~/projetos/dmcv/dmcv[01;32mdavi@computadordavi[00m:[01;34m~/projetos/dmcv/dmcv[00m$ make./processflow
-[?2004lprocesflow>task listar /bin/ls -l
-task
-listar
-/bin/ls
--l
-[?2004h]0;davi@computadordavi: ~/projetos/dmcv/dmcv[01;32mdavi@computadordavi[00m:[01;34m~/projetos/dmcv/dmcv[00m$ git add .
-[?2004l[?2004h]0;davi@computadordavi: ~/projetos/dmcv/dmcv[01;32mdavi@computadordavi[00m:[01;34m~/projetos/dmcv/dmcv[00m$ git commit -m "create s[K[K[K[K[K[K[K[Kimplementação inicial leitura de come[Kan[K[K[K[Kmds" "+" "e"x"i"t"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[K[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[1P"[C[K[K[K[K[Kmake
-[?2004lgcc -Wall -Wextra -std=c11 -c main.c
-gcc -Wall -Wextra -std=c11 -o processflow main.o
-[?2004h]0;davi@computadordavi: ~/projetos/dmcv/dmcv[01;32mdavi@computadordavi[00m:[01;34m~/projetos/dmcv/dmcv[00m$ makegit add ../processflow
-[?2004lprocesflow>task  1 tas         run r task1 task2
-run
-procesflow>e run  task  task
-run
-procesflow>exit
-Programa encerrado
-[?2004h]0;davi@computadordavi: ~/projetos/dmcv/dmcv[01;32mdavi@computadordavi[00m:[01;34m~/projetos/dmcv/dmcv[00m$ make
-[?2004lgcc -Wall -Wextra -std=c11 -c main.c
-gcc -Wall -Wextra -std=c11 -o processflow main.o
-[?2004h]0;davi@computadordavi: ~/projetos/dmcv/dmcv[01;32mdavi@computadordavi[00m:[01;34m~/projetos/dmcv/dmcv[00m$ make./processflow
-[?2004lprocesflow>run task 1  1 task2
-run
-task1
-task2
-procesflow>delete task  2 tsk3   ask3
-delete
-task2
-task3
-procesflow>exit
-Programa encerrado
-procesflow>eix  xit
-Programa encerrado
-procesflow>^C
-[?2004h]0;davi@computadordavi: ~/projetos/dmcv/dmcv[01;32mdavi@computadordavi[00m:[01;34m~/projetos/dmcv/dmcv[00m$ makk[Ke
-[?2004lgcc -Wall -Wextra -std=c11 -c main.
