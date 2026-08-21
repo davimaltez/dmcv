@@ -62,6 +62,47 @@ void run_sequencial(Tarefa * tarefas, int total_tarefas, char * nome_tarefa){
         }
 }
 
+pid_t run_tasks_parallel(Tarefa * tarefas, int total_tarefas, char * nome_tarefa){
+
+        pid_t pid = fork();
+        if (pid < 0) { 
+            fprintf(stderr, "Falha na criação do processo");
+            return -1;
+        }
+        
+        else if (pid == 0) { 
+
+            
+            int indice_tarefa = buscar_tarefa(tarefas,total_tarefas,nome_tarefa);
+
+            if(indice_tarefa != -1){
+                //execlp(tarefas[indice_tarefa].argumentos[indice_tarefa],tarefas[indice_tarefa].argumentos[1],NULL);
+                //execvp = mais dinâmico
+                execvp(tarefas[indice_tarefa].argumentos[0], tarefas[indice_tarefa].argumentos);
+                exit(1);
+            }
+
+            else{
+                printf("Tarefa não encontrada\n");
+                exit(1);
+            }
+        }
+
+        return pid;
+}
+
+void esperar_processos(pid_t * pids, int qtd_pids){
+
+    for(int j = 0; j < qtd_pids; j++){
+        int status;
+        pid_t esperado = waitpid(pids[j], &status, 0);
+
+        if(esperado > 0){
+            printf("Processo Filho concluido\n");
+        }
+    }
+}
+
 int main(int argc, char *argv[]){
 
 
@@ -146,6 +187,27 @@ int main(int argc, char *argv[]){
                                     run_sequencial(tarefas,total_tarefas, palavra);
                                     palavra = strtok(NULL, " \t\n");
                                 }
+                            }
+
+                            //Paralelo
+                            else if(strcmp(palavra,"parallel") == 0){
+                                palavra = strtok(NULL, " \t\n");
+                                if(palavra == NULL){
+                                    printf("Run oq? digite os argumentos");
+                                    continue;
+                                }
+
+                                pid_t pids[32];
+                                int i = 0;
+
+                                while(palavra!=NULL){
+                                    pids[i] = run_tasks_parallel(tarefas,total_tarefas, palavra);
+                                    i++;
+                                    palavra = strtok(NULL, " \t\n");
+                                }
+
+
+                                esperar_processos(pids,i);
                             }
                             else{
 
