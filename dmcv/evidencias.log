@@ -173,3 +173,20 @@ Programa encerrado
 exit
 
 Script done on 2026-08-21 16:06:59-03:00 [COMMAND_EXIT_CODE="0"]
+Script started on 2026-08-21 19:07:08-03:00 [TERM="xterm-256color" TTY="/dev/pts/4" COLUMNS="168" LINES="14"]
+[?2004h]0;davi@computadordavi: ~/projetos/dmcv/dmcv[01;32mdavi@computadordavi[00m:[01;34m~/projetos/dmcv/dmcv[00m$ exit./processflow
+[?2004lModo Interativo
+procesflow> task ler_usuarios cat /etc/passwd
+Tarefa Cadastrada
+procesflow> task filtrar_bash grep /bin/bash
+Tarefa Cadastrada
+procesflow> task contar_linhas wc -l
+Tarefa Cadastrada
+procesflow> run pipe ler_usuarios filtrar_bash contar_linhas
+2
+procesflow> exit
+Programa encerrado
+[?2004h]0;davi@computadordavi: ~/projetos/dmcv/dmcv[01;32mdavi@computadordavi[00m:[01;34m~/projetos/dmcv/dmcv[00m$ exit
+[?2004lexit
+
+Script done on 2026-08-21 19:07:42-03:00 [COMMAND_EXIT_CODE="0"]

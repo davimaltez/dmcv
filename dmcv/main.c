@@ -103,6 +103,63 @@ void esperar_processos(pid_t * pids, int qtd_pids){
     }
 }
 
+void run_pipe(int num_pipes, int pipes[][num_pipes], Tarefa * tarefas, int tarefas_no_pipe, int * indices_tarefas_pipe){
+
+    pid_t pids[32];
+
+    for(int i = 0; i < tarefas_no_pipe; i++){
+
+        pid_t p = fork();
+        pids[i] = p;
+
+        if(p < 0){
+            printf("Falha ao criar processo!");
+            return;
+        }
+        if(p == 0){
+            //primeiro elemento
+            if(i == 0){ 
+
+                dup2(pipes[i][1],STDOUT_FILENO);
+
+            }
+            else if(i == tarefas_no_pipe - 1){
+
+                dup2(pipes[i- 1][0],STDIN_FILENO);        
+
+            }
+            else{
+
+                dup2(pipes[i - 1][0],STDIN_FILENO);
+                dup2(pipes[i][1],STDOUT_FILENO);
+
+            }
+
+            for(int j = 0; j < num_pipes; j++){
+                close(pipes[j][0]);
+                close(pipes[j][1]);
+            }
+
+            int indice_tarefa = indices_tarefas_pipe[i];
+            execvp(tarefas[indice_tarefa].argumentos[0], tarefas[indice_tarefa].argumentos);
+            perror("Erro no execvp");
+            exit(1);
+        }
+    }
+
+
+    for(int i = 0; i < num_pipes; i++){
+        close(pipes[i][0]);
+        close(pipes[i][1]);
+    }
+
+    for(int i = 0; i < tarefas_no_pipe; i++){
+        waitpid(pids[i],NULL,0);
+    }
+}
+
+
+
 int main(int argc, char *argv[]){
 
 
@@ -209,6 +266,38 @@ int main(int argc, char *argv[]){
 
                                 esperar_processos(pids,i);
                             }
+
+                            //Pipe
+                            
+                            else if(strcmp(palavra,"pipe") == 0){
+
+                                palavra = strtok(NULL, " \t\n");
+                                if(palavra == NULL){
+                                    printf("Run oq? digite os argumentos");
+                                    continue;
+                                }
+
+                                
+                                int indices_tarefas_pipe[100];
+                                int numero_tarefas_pipe = 0;
+                                
+                                while(palavra != NULL){
+                                    indices_tarefas_pipe[numero_tarefas_pipe] = buscar_tarefa(tarefas, total_tarefas, palavra);
+                                    palavra = strtok(NULL, " \t\n");
+                                    numero_tarefas_pipe++;
+                                }
+                                
+                                int num_pipes = numero_tarefas_pipe - 1;
+                                int pipes[num_pipes][2]; // Cada linha vai ser um pipe
+
+                                for(int i = 0; i < num_pipes; i++){
+                                    pipe(pipes[i]);
+                                }
+                                
+                                run_pipe(num_pipes, pipes, tarefas, numero_tarefas_pipe,indices_tarefas_pipe);
+
+                            }
+
                             else{
 
                                 pid_t pid = fork();
