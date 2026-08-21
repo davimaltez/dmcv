@@ -16,111 +16,184 @@ typedef struct {
     int quantidade;
 }Tarefa;
 
-int main(){
-    
-    Tarefa tarefas[100];
-    int total_tarefas = 0;
-
-    char linha[1000];
-    
-    while(1){
-        
-        printf("procesflow> ");
-        fflush(stdout);
-        
-        
-        if(fgets(linha,sizeof(linha),stdin) == NULL){
-            printf("\n");
-            break;
-        }
-        
-        //pega a primeira palavra
-        char *palavra = strtok(linha, " \t\n");
-        
-        if (palavra != NULL) {
-            
-            if(strcmp(palavra,"exit") == 0){
-                printf("Programa encerrado\n");
-                break;
-            }
-            
-            if(strcmp(palavra,"task") == 0){
-                
-                char *nome = strtok(NULL, " \t\n");
-                
-                if(nome == NULL){
-                    printf("Nome da tarefa faltando");
-                }
-                else{
-                    
-                    strcpy(tarefas[total_tarefas].nome,nome);
-                    
-                    int i = 0;
-                    
-                    //Cada nova chamada com NULL o strtok vai para onde ele parou na última vez
-                    char *argumento = strtok(NULL, " \t\n");
-                    
-                    while(argumento != NULL){
-                        tarefas[total_tarefas].argumentos[i] = strdup(argumento);
-                        i++;
-                        argumento = strtok(NULL, " \t\n");
-                    }
-                    
-                    //Como o execvp exige que o último elemento seja NULL
-                    
-                    tarefas[total_tarefas].argumentos[i] = NULL;
-                    tarefas[total_tarefas].quantidade = i;
-                    total_tarefas++;
-                    
-                    printf("Tarefa Cadastrada\n");
-                }
-
-            }
-
-        }
-    }
-
-    printf("Tarefas cadastradas: \n");
+int buscar_tarefa(Tarefa * tarefas, int total_tarefas, char * nome_tarefa){
 
     for(int i = 0; i < total_tarefas; i++){
-        printf("%s\n",tarefas[i].nome);
-        
-        for(int j = 0; tarefas[i].argumentos[j] != NULL; j++){
-            printf("%s\n",tarefas[i].argumentos[j]);
+        if(strcmp(tarefas[i].nome,nome_tarefa) == 0){
+            return i;
         }
     }
+    return -1;
+}
 
-    printf("Escolha a forma de Rodar: \n");
 
-    printf("procesflow> ");
-        
-    if(fgets(linha,sizeof(linha),stdin) == NULL){
-        printf("\n");
-    }
-        
-    //pega a primeira palavra
-    char *palavra = strtok(linha, " \t\n");
-    
-    if(strcmp(palavra,"run") == 0){
-        palavra = strtok(NULL, " \t\n");
+void run_sequencial(Tarefa * tarefas, int total_tarefas, char * nome_tarefa){
 
-        
         pid_t pid = fork();
         if (pid < 0) { 
-            fprintf(stderr, "Fork Failed");
-            return 1;
+            fprintf(stderr, "Falha na criação do processo");
+            return;
         }
+        
         else if (pid == 0) { 
-            execlp(tarefas[0].argumentos[0],tarefas[total_tarefas].argumentos[1],NULL);
+
+            
+            int indice_tarefa = buscar_tarefa(tarefas,total_tarefas,nome_tarefa);
+
+            if(indice_tarefa != -1){
+                //execlp(tarefas[indice_tarefa].argumentos[indice_tarefa],tarefas[indice_tarefa].argumentos[1],NULL);
+                //execvp = mais dinâmico
+                execvp(tarefas[indice_tarefa].argumentos[0], tarefas[indice_tarefa].argumentos);
+                exit(1);
+            }
+
+            else{
+                printf("Tarefa não encontrada\n");
+                exit(1);
+            }
         }
         else { 
-    
-            wait(NULL);
-            printf("Child Complete");
+            int status;
+            pid_t esperado = waitpid(pid, &status, 0);
+
+            if(esperado > 0){
+                    printf("Processo Filho concluido\n");
+            }
         }
+}
 
+int main(int argc, char *argv[]){
+
+
+    switch(argc){
+        case 1:
+            printf("Modo Interativo\n");
+
+            Tarefa tarefas[100];
+            int total_tarefas = 0;
+
+            char linha[1000];
+            
+            while(1){
+                
+                printf("procesflow> ");
+                fflush(stdout);
+                
+                
+                if(fgets(linha,sizeof(linha),stdin) == NULL){
+                    printf("\n");
+                    break;
+                }
+                
+                //pega a primeira palavra
+                char *palavra = strtok(linha, " \t\n");
+                
+                if (palavra != NULL) {
+                    
+                    if(strcmp(palavra,"exit") == 0){
+                        printf("Programa encerrado\n");
+                        break;
+                    }
+                    //Cadastramento
+                    if(strcmp(palavra,"task") == 0){
+                        
+                        char *nome = strtok(NULL, " \t\n");
+                        
+                        if(nome == NULL){
+                            printf("Nome da tarefa faltando\n");
+                        }
+                        else{
+                            
+                            strcpy(tarefas[total_tarefas].nome,nome);
+                            
+                            int i = 0;
+                            
+                            //Cada nova chamada com NULL o strtok vai para onde ele parou na última vez
+                            char *argumento = strtok(NULL, " \t\n");
+                            
+                            while(argumento != NULL){
+                                tarefas[total_tarefas].argumentos[i] = strdup(argumento);
+                                i++;
+                                argumento = strtok(NULL, " \t\n");
+                            }
+                            
+                            //Como o execvp exige que o último elemento seja NULL
+                            
+                            tarefas[total_tarefas].argumentos[i] = NULL;
+                            tarefas[total_tarefas].quantidade = i;
+                            total_tarefas++;
+                            
+                            printf("Tarefa Cadastrada\n");
+                        }
+
+                    }
+
+                    //Rodando
+                    else if(strcmp(palavra,"run") == 0){
+            
+                            palavra = strtok(NULL, " \t\n");
+
+                            //Sequencial
+
+                            if(strcmp(palavra,"sequential") == 0){
+                                palavra = strtok(NULL, " \t\n");
+
+                                if(palavra == NULL){
+                                    printf("Run oq? digite os argumentos");
+                                    continue;
+                                }
+                                while(palavra != NULL){
+                                    run_sequencial(tarefas,total_tarefas, palavra);
+                                    palavra = strtok(NULL, " \t\n");
+                                }
+                            }
+                            else{
+
+                                pid_t pid = fork();
+                                if (pid < 0) { 
+                                    fprintf(stderr, "Falha na criação do processo");
+                                    return 1;
+                                }
+                                else if (pid == 0) { 
+
+                                    int indice_tarefa = buscar_tarefa(tarefas,total_tarefas,palavra);
+
+                                    if(indice_tarefa != -1){
+                                        execlp(tarefas[indice_tarefa].argumentos[indice_tarefa],tarefas[total_tarefas].argumentos[1],NULL);
+                                        exit(1);
+                                    }
+
+                                    else{
+                                        printf("Tarefa não encontrada\n");
+                                        return 1;
+                                    }
+                                }
+                                else { 
+                                    int status;
+                                    pid_t esperado = waitpid(pid, &status, 0);
+
+                                    if(esperado > 0){
+                                        printf("Processo Filho concluido\n");
+                                    }
+                                }
+                            }
+                        }
+                        
+                    }
+
+                
+            }
+
+            break;
+
+        case 2:
+            printf("Modo workflow, arquivo: %s\n", argv[1]);
+            break;
+        default:
+            fprintf(stderr, "Erro: número incorreto de argumentos\n");
+            exit(1);
     }
-
-
+    
     return 0;
+
 }

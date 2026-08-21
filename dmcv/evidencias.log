@@ -57,3 +57,34 @@ Child Complete[?2004h]0;davi@computadordavi: ~/projetos/dmcv/dmcv[01;32mdavi
 exit
 
 Script done on 2026-08-19 20:53:03-03:00 [COMMAND_EXIT_CODE="0"]
+
+
+Script started on 2026-08-21 15:20:39-03:00 [TERM="xterm-256color" TTY="/dev/pts/4" COLUMNS="171" LINES="36"]
+[?2004h]0;davi@computadordavi: ~/projetos/dmcv/dmcv[01;32mdavi@computadordavi[00m:[01;34m~/projetos/dmcv/dmcv[00m$ ./processflow
+[?2004l
+Modo Interativo
+procesflow> execvp      task calendario cal
+Tarefa Cadastrada
+procesflow> task sistema uname -a
+Tarefa Cadastrada
+procesflow> task memoria free -h
+Tarefa Cadastrada
+procesflow> task tempo_ligado uptime -p
+Tarefa Cadastrada
+procesflow> run sequential calendario sistema memoria tempo_ligado
+Processo Filho concluido
+Linux computadordavi 6.6.87.2-microsoft-standard-WSL2 #1 SMP PREEMPT_DYNAMIC Thu Jun  5 18:30:46 UTC 2025 x86_64 x86_64 x86_64 GNU/Linux
+Processo Filho concluido
+               total        used        free      shared  buff/cache   available
+Mem:           7.6Gi       1.4Gi       6.0Gi       3.5Mi       422Mi       6.3Gi
+Swap:          2.0Gi          0B       2.0Gi
+Processo Filho concluido
+up 3 hours, 2 minutes
+Processo Filho concluido
+procesflow> exit
+Programa encerrado
+[?2004h]0;davi@computadordavi: ~/projetos/dmcv/dmcv[01;32mdavi@computadordavi[00m:[01;34m~/projetos/dmcv/dmcv[00m$ exit
+[?2004l
+exit
+
+Script done on 2026-08-21 15:21:27-03:00 [COMMAND_EXIT_CODE="0"]
