@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 #include <unistd.h>
 #include <sys/wait.h>   
@@ -20,6 +21,25 @@ typedef struct {
     int modo_saida;
 }Tarefa;
 
+typedef struct {
+
+    int identificador;
+    pid_t pid_tarefa;
+    char nome_tarefa[64];
+    bool ativo;
+    
+}Job;
+
+int buscar_tarefa(Tarefa * tarefas, int total_tarefas, char * nome_tarefa){
+    
+    for(int i = 0; i < total_tarefas; i++){
+        if(strcmp(tarefas[i].nome,nome_tarefa) == 0){
+            return i;
+        }
+    }
+    return -1;
+}
+
 void aplicar_redirecionamentos(Tarefa *t) {
 
 
@@ -29,7 +49,7 @@ void aplicar_redirecionamentos(Tarefa *t) {
         int fd_in = open(t->arquivo_entrada, O_RDONLY);
         
         if (fd_in < 0) {
-            printf("Erro ao abrir arquivo de entrada");
+            printf("Erro ao abrir arquivo de entrada\n");
             fflush(stdout);
             exit(1);
         }
@@ -52,7 +72,7 @@ void aplicar_redirecionamentos(Tarefa *t) {
             fd_out = open(t->arquivo_saida, O_WRONLY | O_CREAT | O_APPEND, 0644);
         }
         if (fd_out < 0) {
-            perror("erro ao abrir arquivo de saída");
+            perror("erro ao abrir arquivo de saída\n");
             fflush(stdout);
             exit(1);
         }
@@ -61,22 +81,124 @@ void aplicar_redirecionamentos(Tarefa *t) {
     }
 }
 
-int buscar_tarefa(Tarefa * tarefas, int total_tarefas, char * nome_tarefa){
 
-    for(int i = 0; i < total_tarefas; i++){
-        if(strcmp(tarefas[i].nome,nome_tarefa) == 0){
-            return i;
+void esperar_todos_jobs(Job *jobs, int total_jobs) {
+    
+    for (int i = 0; i < total_jobs; i++) {
+
+        if (jobs[i].ativo == true) {
+
+            int status;
+            pid_t resultado = waitpid(jobs[i].pid_tarefa, &status, 0); 
+
+            if (resultado == jobs[i].pid_tarefa) {
+                printf("Job [%d] (%s) finalizado antes de encerrar\n", jobs[i].identificador, jobs[i].nome_tarefa);
+            }
+
+            jobs[i].ativo = false;
         }
     }
-    return -1;
 }
+
+void run_start(Job *jobs , Tarefa * tarefas, char * nome_tarefa, int total_tarefas, int * total_jobs){
+    
+    int indice_tarefa = buscar_tarefa(tarefas,total_tarefas,nome_tarefa);
+
+    if(indice_tarefa == -1){
+        printf("Tarefa não encontrada\n");
+        return;
+    }
+
+    pid_t pid = fork();
+
+    if(pid < 0){
+        printf("Falha na criação do processo\n");
+        return;
+    }
+
+    else if(pid == 0){
+
+            aplicar_redirecionamentos(&tarefas[indice_tarefa]);
+            execvp(tarefas[indice_tarefa].argumentos[0], tarefas[indice_tarefa].argumentos);
+            printf("Falha ao executar tarefa");
+            exit(1);
+
+    }
+
+    jobs[*total_jobs].identificador = *total_jobs + 1;
+    jobs[*total_jobs].pid_tarefa = pid;
+    strcpy(jobs[*total_jobs].nome_tarefa,nome_tarefa);
+    jobs[*total_jobs].ativo = true;
+    
+
+    printf("[%d] %d\n",jobs[*total_jobs].identificador, (int)jobs[*total_jobs].pid_tarefa);
+
+    (*total_jobs)++;
+    
+}
+
+void verificar_jobs(Job * jobs, int total_jobs){
+
+    for(int i = 0; i < total_jobs; i++){
+
+        if(jobs[i].ativo == true){
+            pid_t resultado = waitpid(jobs[i].pid_tarefa, 0, WNOHANG);
+
+            if(resultado == -1){
+                printf("Erro\n");
+                jobs[i].ativo = false;
+            }
+            else if(resultado == jobs[i].pid_tarefa){
+                jobs[i].ativo = false;
+            }
+            else{
+                printf("Comando %s || status: ativo\n",jobs[i].nome_tarefa);
+            }
+        }
+    }
+}
+
+
+void wait_job(Job * jobs, int total_jobs, int identificador_job){
+
+    pid_t p;
+    int indice_job = -1; 
+    for(int i = 0; i < total_jobs; i++){
+        if(jobs[i].identificador == identificador_job){
+            p = jobs[i].pid_tarefa;
+            indice_job = i;
+            break;
+        }
+    }
+
+    if(indice_job == -1){
+        printf("Job não encontrado\n");
+        return;
+    }
+
+    if(jobs[indice_job].ativo == true){
+        int status;
+        pid_t resultado = waitpid(p,&status,0);
+
+        if(resultado == p){
+            printf("Job concluído\n");
+        }
+
+        jobs[indice_job].ativo = false;
+    }
+    else{
+        printf("Esse processo já foi encerrado\n");
+    }
+}
+
+
 
 
 void run_sequencial(Tarefa * tarefas, int total_tarefas, char * nome_tarefa){
 
         pid_t pid = fork();
         if (pid < 0) { 
-            fprintf(stderr, "Falha na criação do processo");
+            fprintf(stderr, "Falha na criação do processo\n");
             return;
         }
         
@@ -112,7 +234,7 @@ pid_t run_tasks_parallel(Tarefa * tarefas, int total_tarefas, char * nome_tarefa
 
         pid_t pid = fork();
         if (pid < 0) { 
-            fprintf(stderr, "Falha na criação do processo");
+            printf("Falha na criação do processo\n");
             return -1;
         }
         
@@ -218,6 +340,9 @@ int main(int argc, char *argv[]){
             int total_tarefas = 0;
 
             char linha[1000];
+
+            Job jobs[100];
+            int total_jobs = 0;
             
             while(1){
                 
@@ -236,6 +361,8 @@ int main(int argc, char *argv[]){
                 if (palavra != NULL) {
                     
                     if(strcmp(palavra,"exit") == 0){
+                        //garante que o processo pai vai esperar terminar qualquer job ativo em background
+                        esperar_todos_jobs(jobs, total_jobs);
                         printf("Programa encerrado\n");
                         break;
                     }
@@ -366,7 +493,7 @@ int main(int argc, char *argv[]){
                         int indice_tarefa = buscar_tarefa(tarefas,total_tarefas, palavra);
 
                         if(indice_tarefa == -1){
-                            printf("Tarefa não encontrada");
+                            printf("Tarefa não encontrada\n");
                         }
                         else{
                         
@@ -374,7 +501,7 @@ int main(int argc, char *argv[]){
                             //palava = "nomes.txt"
 
                             strcpy(tarefas[indice_tarefa].arquivo_entrada, palavra);
-                            printf("Input configurado");
+                            printf("Input configurado\n");
                         }
 
                     }
@@ -386,7 +513,7 @@ int main(int argc, char *argv[]){
                         int indice_tarefa = buscar_tarefa(tarefas,total_tarefas,palavra);
 
                         if(indice_tarefa == -1){
-                            printf("Tarefa não encontrada");
+                            printf("Tarefa não encontrada\n");
                         }
                         else{
 
@@ -394,7 +521,7 @@ int main(int argc, char *argv[]){
 
                             strcpy(tarefas[indice_tarefa].arquivo_saida, palavra);
                             tarefas[indice_tarefa].modo_saida = 1;
-                            printf("Output configurado");
+                            printf("Output configurado\n");
 
                         }    
                     }
@@ -405,7 +532,7 @@ int main(int argc, char *argv[]){
                         int indice_tarefa = buscar_tarefa(tarefas,total_tarefas,palavra);
 
                         if(indice_tarefa == -1){
-                            printf("Tarefa não encontrada");
+                            printf("Tarefa não encontrada\n");
                         }
                         else{
 
@@ -413,14 +540,58 @@ int main(int argc, char *argv[]){
 
                             strcpy(tarefas[indice_tarefa].arquivo_saida, palavra);
                             tarefas[indice_tarefa].modo_saida = 2;
-                            printf("Append configurado");
+                            printf("Append configurado\n");
 
                         }    
                     }
 
+                    //Parte de trocar a pasta que os proximos processos filhos vão executar
+                    else if(strcmp(palavra, "workdir") == 0){
+
+                        palavra = strtok(NULL, " \t\n");
+
+                        if(palavra == NULL){
+                            printf("Digite o nome do diretório\n");
+                        }
+                        else if(chdir(palavra) != 0)  {
+
+                            printf("Erro ao trocar o diretório\n");
+                        }
+                        else{
+                            printf("Diretório trocado!!\n");
+                        }
                     }
 
-                
+
+                    else if(strcmp(palavra, "start") == 0){
+
+                        palavra = strtok(NULL, " \t\n");
+
+                        if(palavra == NULL){
+                            printf("Digite o nome do processo\n");
+                        }
+                        else{
+                            run_start(jobs , tarefas, palavra, total_tarefas, &total_jobs);
+                        }
+                    }
+
+                    else if(strcmp(palavra, "jobs") == 0){
+                        verificar_jobs(jobs,total_jobs);
+                    }
+
+                    else if(strcmp(palavra, "wait") == 0) {
+
+                        palavra = strtok(NULL, " \t\n");
+
+                        if (palavra != NULL) {
+                            int identificador_job = atoi(palavra);
+                            wait_job(jobs, total_jobs, identificador_job);
+                        } 
+                        else {
+                            printf("Informe o ID do job\n");
+                        }
+                    }
+                }
             }
 
             break;

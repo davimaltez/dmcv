@@ -210,3 +210,31 @@ Programa encerrado
 [?2004lexit
 
 Script done on 2026-08-21 22:35:17-03:00 [COMMAND_EXIT_CODE="0"]
+Script started on 2026-08-22 15:49:10-03:00 [TERM="xterm-256color" TTY="/dev/pts/4" COLUMNS="177" LINES="12"]
+[?2004h]0;davi@computadordavi: ~/projetos/dmcv/dmcv[01;32mdavi@computadordavi[00m:[01;34m~/projetos/dmcv/dmcv[00m$ script -a evidencias.logclear[K./processflow
+[?2004lModo Interativo
+procesflow> task longo sleep 10
+Tarefa Cadastrada
+procesflow> task curto sleep 3
+Tarefa Cadastrada
+procesflow> startu    t curto
+[1] 34981
+procesflow> start longo
+[2] 34997
+procesflow> jobs
+Comando longo || status: ativo
+procesflow> jobs
+Comando longo || status: ativo
+procesflow> jobs
+procesflow> wait
+Informe o ID do job
+procesflow> wait 2
+Esse processo já foi encerrado
+procesflow> task longo sleep 10
+Tarefa Cadastrada
+procesflow> exit
+Programa encerrado
+[?2004h]0;davi@computadordavi: ~/projetos/dmcv/dmcv[01;32mdavi@computadordavi[00m:[01;34m~/projetos/dmcv/dmcv[00m$ exit
+[?2004lexit
+
+Script done on 2026-08-22 15:51:05-03:00 [COMMAND_EXIT_CODE="0"]
